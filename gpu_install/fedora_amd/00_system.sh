@@ -21,6 +21,7 @@ sudo dnf install -y --skip-unavailable \
     git git-lfs curl wget unzip \
     ffmpeg-free libsndfile libass libass-devel \
     mesa-libGL mesa-libEGL mesa-vulkan-drivers vulkan-loader \
+    libdrm \
     python3.12 python3.12-devel python3 python3-pip python3-virtualenv \
     pkgconf openssh-server
 

@@ -17,10 +17,12 @@ c_green() { printf '\033[1;32m%s\033[0m\n' "$1"; }
 # ---------- F5-TTS ----------
 c_green "[1/5] F5-TTS"
 pip install --upgrade f5-tts
+# F5-TTS 1.1.x changed load_model() signature; pre-cache via huggingface_hub.
 python - <<'PY'
-from f5_tts.infer.utils_infer import load_model
-load_model()  # downloads default English model on first call
-print("F5-TTS ready")
+from huggingface_hub import snapshot_download
+snapshot_download("SWivid/F5-TTS", allow_patterns=["F5TTS_v1_Base/*", "F5TTS_Base/*"])
+snapshot_download("charactr/vocos-mel-24khz")
+print("F5-TTS weights cached")
 PY
 
 # ---------- Diffusers stack (LTX-Video + HunyuanVideo + CogVideoX live here) ----------
