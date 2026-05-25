@@ -7,24 +7,31 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 # PyTorch's ROCm 6.2 index ships cp310/cp311/cp312 wheels (not 3.13 yet), so we
-# pin to 3.12 by preference. Specifically use /usr/bin/python3.12 to avoid the
-# user-local Pythons (~/.local/bin) that may be missing ensurepip.
-PY=""
-for cand in /usr/bin/python3.12 /usr/bin/python3.11 /usr/bin/python3.10 python3.12 python3.11 python3.10 python3; do
-    if [[ -x "$cand" ]] || command -v "$cand" >/dev/null 2>&1; then
-        # Confirm ensurepip is available (some user-local builds lack it)
-        if "$cand" -c "import ensurepip" >/dev/null 2>&1; then
-            PY="$cand"
-            break
+# pin to 3.12. Only accept SYSTEM Pythons — uv-managed and pyenv Pythons under
+# ~/.local/share/{uv,pyenv}/ build relocatable interpreters that break venvs.
+find_system_python() {
+    for cand in /usr/bin/python3.12 /usr/bin/python3.11 /usr/bin/python3.10; do
+        if [[ -x "$cand" ]] && "$cand" -c "import ensurepip, venv" >/dev/null 2>&1; then
+            echo "$cand"
+            return
         fi
-    fi
-done
+    done
+}
+
+PY="$(find_system_python || true)"
+
 if [[ -z "$PY" ]]; then
-    echo "No suitable Python (with ensurepip) found. Install python3.12 first:" >&2
-    echo "    sudo dnf install -y python3.12 python3.12-devel" >&2
+    echo "No system /usr/bin/python3.{10,11,12} found. Installing python3.12 via dnf..."
+    sudo dnf install -y python3.12 python3.12-devel
+    PY="$(find_system_python || true)"
+fi
+
+if [[ -z "$PY" ]]; then
+    echo "FAILED: could not find or install a suitable system Python." >&2
+    echo "Try manually:  sudo dnf install -y python3.12 python3.12-devel" >&2
     exit 1
 fi
-echo "Using interpreter: $($PY --version) at $(command -v $PY || echo $PY)"
+echo "Using interpreter: $($PY --version) at $PY"
 
 # Re-create the venv if a previous run left one behind for a different Python.
 if [[ -d .venv ]] && ! .venv/bin/python --version 2>/dev/null | grep -q "$($PY --version | awk '{print $2}' | cut -d. -f1,2)"; then
