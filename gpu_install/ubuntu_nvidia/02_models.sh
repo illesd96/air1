@@ -50,12 +50,17 @@ print("HunyuanVideo weights cached")
 PY
 
 # ---------- MusicGen ----------
-c_green "[5/5] MusicGen + WhisperX"
-pip install --upgrade audiocraft whisperx
+c_green "[5/5] MusicGen (transformers) + WhisperX"
+# Use transformers' native MusicGen instead of audiocraft (which pulls
+# spacy + thinc + a broken PyAV build chain).
+pip install --upgrade whisperx
 python - <<'PY'
-from audiocraft.models import MusicGen
-MusicGen.get_pretrained("facebook/musicgen-medium")
-print("MusicGen ready")
+import torch
+from transformers import AutoProcessor, MusicgenForConditionalGeneration
+print("Downloading MusicGen-medium via transformers (~3 GB)...")
+AutoProcessor.from_pretrained("facebook/musicgen-medium")
+MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-medium")
+print("MusicGen ready (transformers backend)")
 
 import whisperx
 whisperx.load_model("large-v3", "cuda", compute_type="float16")

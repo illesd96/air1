@@ -18,6 +18,7 @@ fi
 # whole transaction; we re-validate the critical ones below.
 sudo dnf install -y --skip-unavailable \
     @development-tools \
+    gcc-c++ cmake \
     git git-lfs curl wget unzip \
     ffmpeg-free libsndfile libass libass-devel \
     mesa-libGL mesa-libEGL mesa-vulkan-drivers vulkan-loader \

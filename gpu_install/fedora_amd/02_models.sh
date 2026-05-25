@@ -55,17 +55,20 @@ CogVideoXImageToVideoPipeline.from_pretrained("THUDM/CogVideoX-5b-I2V", torch_dt
 print("CogVideoX-5B weights cached")
 PY
 
-# ---------- MusicGen + WhisperX ----------
-c_green "[5/5] MusicGen + WhisperX"
-# audiocraft -> av==11.0.0 (PyAV) builds from source against ffmpeg dev headers.
-# Make sure they're present (full ffmpeg-devel from RPM Fusion, not ffmpeg-free-devel).
-sudo dnf install -y --skip-unavailable ffmpeg-devel || \
-    sudo dnf install -y --skip-unavailable ffmpeg-free-devel
-pip install --upgrade audiocraft whisperx
+# ---------- MusicGen (via transformers) + WhisperX ----------
+c_green "[5/5] MusicGen (transformers) + WhisperX"
+# We deliberately DO NOT install `audiocraft` here. It pulls spacy + thinc and
+# tries to build PyAV from source against ffmpeg dev headers — a mess on
+# modern Python. `transformers` has native MusicGen support backed by the same
+# Meta weights, with no audiocraft dependency.
+pip install --upgrade whisperx
 python - <<'PY'
-from audiocraft.models import MusicGen
-MusicGen.get_pretrained("facebook/musicgen-medium")
-print("MusicGen ready")
+import torch
+from transformers import AutoProcessor, MusicgenForConditionalGeneration
+print("Downloading MusicGen-medium via transformers (~3 GB)...")
+AutoProcessor.from_pretrained("facebook/musicgen-medium")
+MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-medium")
+print("MusicGen ready (transformers backend)")
 
 # WhisperX uses CTranslate2 under the hood — on ROCm we run the large model on
 # CPU which is plenty fast for 60-second clips on a 16-core Ryzen.
