@@ -1,0 +1,22 @@
+# Make sure shell scripts always have LF line endings, even when checked out on Windows.
+# (Bash on Linux refuses to run scripts with CRLF.)
+*.sh        text eol=lf
+*.bash      text eol=lf
+Dockerfile  text eol=lf
+
+# Auto-handle other text files normally
+* text=auto
+
+# Binary-ish formats
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.webp      binary
+*.gif       binary
+*.mp4       binary
+*.mov       binary
+*.wav       binary
+*.mp3       binary
+*.bson      binary
+*.gguf      binary
+*.safetensors binary

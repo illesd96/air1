@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aircraft",
+  "type": "object",
+  "required": ["_id", "names", "category"],
+  "properties": {
+    "_id": { "type": "string", "description": "kebab-case slug" },
+    "names": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary":      { "type": "string" },
+        "official":     { "type": "string" },
+        "nicknames":    { "type": "array", "items": { "type": "string" } },
+        "translations": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "category":    { "type": "string", "enum": ["commercial", "military", "general-aviation", "historic"] },
+    "subcategory": { "type": "string" },
+    "tags":        { "type": "array", "items": { "type": "string" } },
+
+    "manufacturer":      { "type": "string" },
+    "country_of_origin": { "type": "string" },
+    "first_flight":      { "type": ["string", "null"] },
+    "introduction":      { "type": ["string", "null"] },
+    "retired":           { "type": ["string", "null"] },
+    "status":            { "type": "string" },
+
+    "specs": {
+      "type": "object",
+      "properties": {
+        "role":             { "type": "string" },
+        "crew":             { "type": ["integer", "null"] },
+        "capacity":         { "type": ["integer", "null"] },
+        "length_m":         { "type": ["number", "null"] },
+        "wingspan_m":       { "type": ["number", "null"] },
+        "height_m":         { "type": ["number", "null"] },
+        "max_speed_kmh":    { "type": ["number", "null"] },
+        "cruise_speed_kmh": { "type": ["number", "null"] },
+        "range_km":         { "type": ["number", "null"] },
+        "service_ceiling_m":{ "type": ["number", "null"] },
+        "engines":          { "type": "string" },
+        "mtow_kg":          { "type": ["number", "null"] }
+      }
+    },
+
+    "production": {
+      "type": "object",
+      "properties": {
+        "units_built":      { "type": ["integer", "null"] },
+        "in_service":       { "type": ["integer", "null"] },
+        "production_years": { "type": "string" }
+      }
+    },
+
+    "short_description": { "type": "string" },
+    "long_description":  { "type": "string" },
+
+    "story": {
+      "type": "object",
+      "properties": {
+        "draft":        { "type": "string" },
+        "hooks":        { "type": "array", "items": { "type": "string" } },
+        "video_script": { "type": ["string", "null"] },
+        "status":       { "type": "string", "enum": ["empty", "drafted", "scripted", "recorded", "published"] }
+      }
+    },
+
+    "scores": {
+      "type": "object",
+      "properties": {
+        "fame":                   { "type": "number" },
+        "wiki_pageviews_30d":     { "type": ["number", "null"] },
+        "production_volume_norm": { "type": "number" },
+        "cultural_impact":        { "type": "number" },
+        "trending":               { "type": "number" },
+        "composite":              { "type": "number" }
+      }
+    },
+
+    "images": {
+      "type": "object",
+      "properties": {
+        "cover":   { "type": ["object", "null"] },
+        "gallery": { "type": "array" },
+        "external_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["site", "url"],
+            "properties": {
+              "site": { "type": "string" },
+              "url":  { "type": "string" },
+              "kind": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "sources": {
+      "type": "object",
+      "properties": {
+        "wikidata_id":         { "type": ["string", "null"] },
+        "wikipedia_url":       { "type": ["string", "null"] },
+        "wikipedia_revision":  { "type": ["integer", "null"] },
+        "ingest_runs":         { "type": "array" }
+      }
+    },
+
+    "publish": {
+      "type": "object",
+      "description": "Per-platform publishing metadata for social/video pipelines",
+      "properties": {
+        "hooks": {
+          "type": "object",
+          "properties": {
+            "shortform": { "type": "string", "description": "3-second cold open for TikTok/Reels/Shorts" },
+            "longform":  { "type": "string", "description": "30-second cold open for a YouTube long-form video" }
+          }
+        },
+        "titles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "5 clickbait-friendly title variants"
+        },
+        "hashtags": {
+          "type": "object",
+          "properties": {
+            "instagram": { "type": "array", "items": { "type": "string" } },
+            "tiktok":    { "type": "array", "items": { "type": "string" } },
+            "youtube":   { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "description_template": {
+          "type": "string",
+          "description": "YouTube description block with timestamp placeholders, CTA, hashtags"
+        },
+        "thumbnail_concept": {
+          "type": "object",
+          "properties": {
+            "focal_subject": { "type": "string" },
+            "overlay_text":  { "type": "string" },
+            "mood":          { "type": "string" }
+          }
+        },
+        "seo_keywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "engagement_question": { "type": "string" },
+        "related_aircraft": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Slugs of related aircraft for series/playlist building"
+        },
+        "music_mood": { "type": "string" },
+        "runtimes": {
+          "type": "object",
+          "properties": {
+            "shortform_seconds": { "type": "number" },
+            "longform_seconds":  { "type": "number" }
+          }
+        }
+      }
+    },
+
+    "ingested_at":  { "type": "string" },
+    "last_updated": { "type": "string" }
+  }
+}

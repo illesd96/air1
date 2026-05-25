@@ -1,0 +1,65 @@
+# --- secrets ---
+.env
+.env.local
+.env.*.local
+*.secret
+*.pem
+*.key
+client_secrets.json
+token.json
+
+# --- python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.python-version
+
+# --- editors / OS ---
+.idea/
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- runtime / state ---
+*.log
+gpu_install/.state/
+cron.log
+
+# --- data: keep seed CSV + schema, ignore generated dumps & downloaded media ---
+# Downloaded CC/PD images (regeneratable from Commons; not needed on GPU PC)
+data/images/*/*/
+!data/images/*/.gitkeep
+# JSON exports from Mongo (regenerate with scripts/08_export.py)
+data/exports/*.json
+data/exports/*.log
+# Mongo dump files
+*.bson
+
+# --- video pipeline outputs (regenerate from Mongo + models) ---
+video_pipeline/workdir/
+video_pipeline/voices/*.wav
+video_pipeline/voices/*.mp3
+video_pipeline/voices/*.m4a
+!video_pipeline/voices/.gitkeep
+renders/
+!renders/*/.gitkeep
+
+# --- model weights (live in ~/.cache/huggingface) ---
+models/
+*.safetensors
+*.gguf
+*.bin
+
+# --- agent transcripts / temp ---
+*.tmp
+agent_logs/
+
+# --- docker ---
+mongo-data/

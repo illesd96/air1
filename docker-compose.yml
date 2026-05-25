@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: aircraft-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: aircraft
+      MONGO_INITDB_ROOT_PASSWORD: aircraft
+      MONGO_INITDB_DATABASE: aircraft
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express:1
+    container_name: aircraft-mongo-ui
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: aircraft
+      ME_CONFIG_MONGODB_ADMINPASSWORD: aircraft
+      ME_CONFIG_MONGODB_URL: mongodb://aircraft:aircraft@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:

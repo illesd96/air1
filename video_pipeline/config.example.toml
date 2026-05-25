@@ -1,0 +1,41 @@
+# Edit and copy to config.toml on the GPU PC
+
+[gpu]
+device = "cuda:0"
+
+[tts]
+backend = "f5-tts"          # "f5-tts" | "xtts-v2" | "piper"
+voice_sample = "video_pipeline/voices/narrator.wav"   # 15-30 sec clean clip
+ref_text = "Optional reference transcript for the voice sample."
+
+[video_gen]
+backend = "ltx-video"       # "ltx-video" | "hunyuan-video" | "cogvideox-5b" | "wan-2.1"
+resolution = "1080x1920"    # vertical 9:16
+fps = 24
+# Use HunyuanVideo only for the hero shot (first 2-4 sec).
+hero_backend = "hunyuan-video"
+
+[music]
+backend = "musicgen"        # "musicgen" | "stable-audio-open"
+model = "facebook/musicgen-medium"
+
+[subtitles]
+backend = "whisperx"
+model = "large-v3"
+language = "en"
+style = "kinetic"           # "kinetic" (word-by-word) | "static" (sentence) | "minimal"
+burn_in = true              # burn into final MP4
+
+[assemble]
+target_seconds_min = 30
+target_seconds_max = 60
+title_card_seconds = 1.5
+end_card_seconds = 1.5
+
+[output]
+renders_dir = "renders"
+workdir = "video_pipeline/workdir"
+
+[mongo]
+uri = "mongodb://aircraft:aircraft@localhost:27017/?authSource=admin"
+db  = "aircraft"

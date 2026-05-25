@@ -1,0 +1,4 @@
+mcdonnell-douglas-dc-10
+mcdonnell-douglas-md-11
+boeing-727
+boeing-747
