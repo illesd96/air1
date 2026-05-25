@@ -14,14 +14,15 @@ if [[ "$(id -u)" -eq 0 ]]; then
 fi
 
 # ---------- base toolchain ----------
-sudo dnf install -y \
+# `--skip-unavailable` so any single missing optional package doesn't abort the
+# whole transaction; we re-validate the critical ones below.
+sudo dnf install -y --skip-unavailable \
     @development-tools \
     git git-lfs curl wget unzip \
     ffmpeg-free libsndfile libass libass-devel \
     mesa-libGL mesa-libEGL mesa-vulkan-drivers vulkan-loader \
-    python3.11 python3.11-devel python3-pip python3-virtualenv \
-    pkgconf openssh-server \
-    mongodb-org-mongosh
+    python3 python3-devel python3-pip python3-virtualenv \
+    pkgconf openssh-server
 
 # RPM Fusion enables full ffmpeg (not just ffmpeg-free) — needed for libx264.
 if ! rpm -q rpmfusion-free-release >/dev/null 2>&1; then

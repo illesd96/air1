@@ -6,8 +6,22 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
+# Use whichever Python version is available, preferring 3.13 → 3.12 → 3.11.
+PY=""
+for cand in python3.13 python3.12 python3.11 python3; do
+    if command -v "$cand" >/dev/null 2>&1; then
+        PY="$cand"
+        break
+    fi
+done
+if [[ -z "$PY" ]]; then
+    echo "No python3 found." >&2
+    exit 1
+fi
+echo "Using interpreter: $($PY --version) at $(command -v $PY)"
+
 if [[ ! -d .venv ]]; then
-    python3.11 -m venv .venv
+    "$PY" -m venv .venv
 fi
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools

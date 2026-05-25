@@ -22,16 +22,31 @@ fi
 . .env
 echo "MONGO_URI = $MONGO_URI"
 
-# ---------- Mongo reachability ----------
-c_blue "Testing Mongo reachability..."
-if ! mongosh "$MONGO_URI" --eval "db.aircraft.countDocuments({})" --quiet 2>/dev/null | grep -qE '^[0-9]+$'; then
+# ---------- Mongo reachability (uses pymongo from the project venv) ----------
+c_blue "Testing Mongo reachability via pymongo..."
+. .venv/bin/activate 2>/dev/null || true
+count=$(python - <<PY 2>/dev/null
+import os, sys
+try:
+    from pymongo import MongoClient
+except Exception as e:
+    print(f"missing-pymongo: {e}", file=sys.stderr); sys.exit(2)
+try:
+    c = MongoClient(os.environ.get("MONGO_URI", "${MONGO_URI}"), serverSelectionTimeoutMS=5000)
+    print(c[os.environ.get("MONGO_DB", "${MONGO_DB:-aircraft}")]["aircraft"].estimated_document_count())
+except Exception as e:
+    print(f"unreachable: {e}", file=sys.stderr); sys.exit(3)
+PY
+)
+if [[ -z "$count" || ! "$count" =~ ^[0-9]+$ ]]; then
     c_red "Cannot reach Mongo at $MONGO_URI"
-    c_red "  - Check the DB PC's docker-compose.yml binds Mongo to 0.0.0.0 (not 127.0.0.1)"
-    c_red "  - Check Windows firewall allows inbound 27017"
-    c_red "  - You can edit ~/aircraft/.env then re-run: bash gpu_install/03_configure.sh"
+    c_red "  - On the DB PC: docker-compose.yml needs Mongo bound to 0.0.0.0 (not 127.0.0.1)"
+    c_red "  - On the DB PC: Windows firewall must allow inbound TCP 27017"
+    c_red "  - Edit ~/aircraft/.env if the IP is wrong, then re-run:"
+    c_red "      bash gpu_install/03_configure.sh"
     exit 1
 fi
-echo "Mongo reachable. Aircraft count: $(mongosh "$MONGO_URI" --eval 'db.aircraft.countDocuments({})' --quiet)"
+echo "Mongo reachable. Aircraft count: $count"
 
 # ---------- voice sample ----------
 mkdir -p video_pipeline/voices

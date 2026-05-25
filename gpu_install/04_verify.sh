@@ -25,9 +25,15 @@ import pymongo
 print("All packages import OK")
 PY
 
-# ---------- Mongo reachable ----------
+# ---------- Mongo reachable (via pymongo) ----------
 . .env
-count=$(mongosh "$MONGO_URI" --eval "db.aircraft.countDocuments({})" --quiet)
+count=$(python - <<'PY'
+import os
+from pymongo import MongoClient
+c = MongoClient(os.environ["MONGO_URI"], serverSelectionTimeoutMS=5000)
+print(c[os.environ.get("MONGO_DB", "aircraft")]["aircraft"].estimated_document_count())
+PY
+)
 if [[ -z "$count" || "$count" -lt 100 ]]; then
     c_red "Mongo unreachable or empty (count=$count)"
     exit 1
