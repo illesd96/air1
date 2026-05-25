@@ -14,9 +14,9 @@ if [[ ! -f .env ]]; then
     c_blue "Setting up .env"
     read -rp "Enter the LAN IP of the Windows DB PC (e.g. 192.168.1.42): " db_ip
     cat > .env << EOF
-MONGO_URI=mongodb://aircraft:aircraft@${db_ip}:27017/?authSource=admin
-MONGO_DB=aircraft
-USER_AGENT=aircraft-db/0.1 (pilles@eev-systems.com)
+MONGO_URI="mongodb://aircraft:aircraft@${db_ip}:27017/?authSource=admin"
+MONGO_DB="aircraft"
+USER_AGENT="aircraft-db/0.1 (pilles@eev-systems.com)"
 EOF
 fi
 . .env

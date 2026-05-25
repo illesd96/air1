@@ -95,10 +95,10 @@ fi
 ENV_FILE="$ROOT/.env"
 if [[ ! -f "$ENV_FILE" ]]; then
     cat > "$ENV_FILE" << 'EOF'
-MONGO_URI=mongodb://aircraft:aircraft@localhost:27017/?authSource=admin
-MONGO_DB=aircraft
-USER_AGENT=aircraft-db/0.1 (pilles@eev-systems.com)
-IMAGE_ROOT=./data/images
+MONGO_URI="mongodb://aircraft:aircraft@localhost:27017/?authSource=admin"
+MONGO_DB="aircraft"
+USER_AGENT="aircraft-db/0.1 (pilles@eev-systems.com)"
+IMAGE_ROOT="./data/images"
 EOF
     c_green "Wrote .env pointing at localhost."
 else
