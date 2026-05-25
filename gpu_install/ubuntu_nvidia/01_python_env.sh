@@ -13,11 +13,14 @@ fi
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 
-# Pipeline-side small deps
-pip install -r video_pipeline/requirements.txt
+# CRITICAL ORDER: install PyTorch CUDA before anything that depends on torch,
+# so transitive deps don't pull a different build from PyPI.
+pip install --no-cache-dir --upgrade --force-reinstall \
+    torch torchvision torchaudio \
+    --index-url https://download.pytorch.org/whl/cu124
 
-# PyTorch — must match the CUDA toolkit version
-pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+# Now safe to install the rest.
+pip install -r video_pipeline/requirements.txt
 
 # Sanity-check
 python - <<'PY'

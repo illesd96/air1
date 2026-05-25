@@ -49,14 +49,29 @@ fi
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 
-# Pipeline-side small deps
-pip install -r video_pipeline/requirements.txt
+# CRITICAL ORDER: PyTorch ROCm MUST be installed before anything that depends
+# on torch (whisperx, diffusers, audiocraft) — otherwise pip will pull the
+# CUDA build from PyPI as a transitive dependency, and `--upgrade` won't
+# switch a CUDA wheel to a ROCm one because the version number looks "newer".
+#
+# If a previous run left a CUDA torch in this venv, blow it away first.
+pip uninstall -y torch torchvision torchaudio \
+    pytorch-triton pytorch-triton-rocm triton \
+    nvidia-cublas-cu12 nvidia-cuda-cupti-cu12 nvidia-cuda-nvrtc-cu12 \
+    nvidia-cuda-runtime-cu12 nvidia-cudnn-cu12 nvidia-cufft-cu12 \
+    nvidia-cufile-cu12 nvidia-curand-cu12 nvidia-cusolver-cu12 \
+    nvidia-cusparse-cu12 nvidia-cusparselt-cu12 nvidia-nccl-cu12 \
+    nvidia-nvjitlink-cu12 nvidia-nvtx-cu12 \
+    2>/dev/null || true
 
-# PyTorch ROCm wheels. As of 2025-Q4 / 2026-Q1 PyTorch ships ROCm 6.2 builds for cp311.
-# When a newer ROCm is needed, bump the URL:  https://pytorch.org/get-started/locally/
-pip install --upgrade \
+# PyTorch ROCm 6.3 has cp310/cp311/cp312 wheels for torch 2.5-2.8. ROCm 6.2
+# index only goes up to ~2.5.x, which whisperx (which needs ~2.8) won't accept.
+pip install --no-cache-dir --upgrade --force-reinstall \
     torch torchvision torchaudio \
-    --index-url https://download.pytorch.org/whl/rocm6.2
+    --index-url https://download.pytorch.org/whl/rocm6.3
+
+# Now safe to install the rest — torch is locked in.
+pip install -r video_pipeline/requirements.txt
 
 # Sanity-check
 python - <<'PY'

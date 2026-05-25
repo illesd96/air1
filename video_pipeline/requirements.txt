@@ -1,26 +1,11 @@
-# Pipeline-side deps (installed on the GPU PC)
-# Models themselves have their own install instructions — see VIDEO_PIPELINE.md.
+# Project-side deps ONLY. Heavy ML stuff (torch, whisperx, diffusers, etc.)
+# is installed in the bootstrap stages with index-URL overrides so the build
+# variant (ROCm vs CUDA) is picked correctly.
 
-# Shared
 pymongo>=4.6
 requests>=2.31
 python-dotenv>=1.0
 tqdm>=4.66
 Pillow>=10.2
 tomli>=2.0; python_version < "3.11"
-
-# Subtitles (WhisperX)
-whisperx>=3.1
-
-# Text-to-speech — install whichever backend you'll use:
-# F5-TTS:    pip install f5-tts
-# XTTS-v2:   pip install TTS
-# Piper:     pip install piper-tts
-
-# Music — Audiocraft (MusicGen) is its own repo, install per their README:
-# https://github.com/facebookresearch/audiocraft
-
-# Video-gen: each model has its own install path.
-# LTX-Video, HunyuanVideo, CogVideoX, Wan 2.1 — see their HF model cards.
-
-# ffmpeg must be in PATH.
+# ffmpeg must be in PATH (installed by stage 00).
