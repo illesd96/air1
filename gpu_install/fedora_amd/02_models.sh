@@ -57,6 +57,10 @@ PY
 
 # ---------- MusicGen + WhisperX ----------
 c_green "[5/5] MusicGen + WhisperX"
+# audiocraft -> av==11.0.0 (PyAV) builds from source against ffmpeg dev headers.
+# Make sure they're present (full ffmpeg-devel from RPM Fusion, not ffmpeg-free-devel).
+sudo dnf install -y --skip-unavailable ffmpeg-devel || \
+    sudo dnf install -y --skip-unavailable ffmpeg-free-devel
 pip install --upgrade audiocraft whisperx
 python - <<'PY'
 from audiocraft.models import MusicGen
